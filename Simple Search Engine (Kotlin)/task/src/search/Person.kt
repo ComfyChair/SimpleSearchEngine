@@ -1,12 +1,10 @@
 package search
 
-data class Person(val data: String)
-
-fun Person.print() {
-    println(this.data)
-}
-
-fun Collection<Person>.printAll() {
-    println("=== List of people ===")
-    this.forEach { it.print() }
+data class Person(val data: String) {
+    fun getItems(): List<String> {
+        return data.split(" ").map { it.lowercase() }
+    }
+    override fun toString(): String {
+        return this.data
+    }
 }

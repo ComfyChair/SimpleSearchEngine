@@ -7,7 +7,7 @@ private const val ENTER_QUERY = "\nEnter a name or email to search all suitable 
 private const val NOT_FOUND: String = "Not found"
 private const val INCORRECT_OPTION: String = "\nIncorrect option! Try again."
 
-private var persons = mutableListOf<Person>()
+private var searchIndex = InvertedIndex()
 
 fun main(args: Array<String>) {
     if (args.size >= 2) {
@@ -24,18 +24,13 @@ fun main(args: Array<String>) {
     }
 }
 
-private fun loadData(fileName: String) {
-    val dataFile = File(fileName)
-    dataFile.forEachLine { persons.add(Person(it)) }
-}
-
 fun startProgram() {
     println(MENU_STR)
     var input = readln()
     while (input != "0") {
         when (input) {
-            "1" -> findPerson(persons)
-            "2" -> persons.printAll()
+            "1" -> startSearch()
+            "2" -> printAll()
             else -> println(INCORRECT_OPTION)
         }
         println(MENU_STR)
@@ -43,15 +38,22 @@ fun startProgram() {
     }
 }
 
-private fun findPerson(lines: Collection<Person>) {
+fun printAll() {
+    searchIndex.getAll().forEach(::println)
+}
+
+fun startSearch() {
     println(ENTER_QUERY)
     val query = readln()
-    val containingLines = lines.filter { it.data.contains(query, ignoreCase = true) }
-    if (containingLines.isEmpty()) {
+    val resultList : List<Person>?  = searchIndex.findPerson(query)
+    if (resultList == null) {
         println(NOT_FOUND)
     } else {
-        containingLines.forEach { it.print() }
+        resultList.forEach(::println)
     }
 }
 
-
+private fun loadData(fileName: String) {
+    val dataFile = File(fileName)
+    dataFile.forEachLine { searchIndex.add(Person(it)) }
+}
