@@ -3,6 +3,7 @@ package search
 import java.io.File
 
 private const val MENU_STR = "\n=== Menu ===\n1. Find a person\n2. Print all people\n0. Exit"
+private const val SELECT_STRATEGY = "Select a matching strategy: ALL, ANY, NONE"
 private const val ENTER_QUERY = "\nEnter a name or email to search all suitable people."
 private const val NOT_FOUND: String = "Not found"
 private const val INCORRECT_OPTION: String = "\nIncorrect option! Try again."
@@ -43,13 +44,20 @@ fun printAll() {
 }
 
 fun startSearch() {
-    println(ENTER_QUERY)
-    val query = readln()
-    val resultList : List<Person>?  = searchIndex.findPerson(query)
-    if (resultList == null) {
-        println(NOT_FOUND)
+    println(SELECT_STRATEGY)
+    val strategyName = readln()
+    if (strategyName in SearchStrategy.values().map { it.name }) {
+        val strategy : SearchStrategy = SearchStrategy.valueOf(strategyName)
+        println(ENTER_QUERY)
+        val query = readln()
+        val resultList = searchIndex.findPerson(query, strategy)
+        if (resultList.isEmpty()) {
+            println(NOT_FOUND)
+        } else {
+            resultList.forEach(::println)
+        }
     } else {
-        resultList.forEach(::println)
+        println(INCORRECT_OPTION)
     }
 }
 
