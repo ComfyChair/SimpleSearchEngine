@@ -1,22 +1,35 @@
 package search
 
+import java.io.File
+
 private const val MENU_STR = "\n=== Menu ===\n1. Find a person\n2. Print all people\n0. Exit"
 private const val ENTER_QUERY = "\nEnter a name or email to search all suitable people."
 private const val NOT_FOUND: String = "Not found"
 private const val INCORRECT_OPTION: String = "\nIncorrect option! Try again."
 
-private lateinit var persons: Array<Person>
+private var persons = mutableListOf<Person>()
 
-fun main() {
-    println("Enter the number of people:")
-    val noOfLines = readln().toInt()
-    println("Enter all people:")
-    persons = Array(noOfLines) { Person(readln()) }
-    showMenu()
-    println("\nBye!")
+fun main(args: Array<String>) {
+    if (args.size >= 2) {
+        val command = args[0]
+        if (command == "--data") {
+            loadData(args[1])
+            startProgram()
+            println("\nBye!")
+        } else {
+            println("Unknown command: $command")
+        }
+    } else {
+        println("Not enough arguments. Bye!")
+    }
 }
 
-fun showMenu() {
+private fun loadData(fileName: String) {
+    val dataFile = File(fileName)
+    dataFile.forEachLine { persons.add(Person(it)) }
+}
+
+fun startProgram() {
     println(MENU_STR)
     var input = readln()
     while (input != "0") {
@@ -30,7 +43,7 @@ fun showMenu() {
     }
 }
 
-private fun findPerson(lines: Array<Person>) {
+private fun findPerson(lines: Collection<Person>) {
     println(ENTER_QUERY)
     val query = readln()
     val containingLines = lines.filter { it.data.contains(query, ignoreCase = true) }

@@ -6,7 +6,7 @@ fun Person.print() {
     println(this.data)
 }
 
-fun Array<Person>.printAll() {
+fun Collection<Person>.printAll() {
     println("=== List of people ===")
     this.forEach { it.print() }
 }
